@@ -1,0 +1,21 @@
+Submit the source code and test cases for your solution to HackerRank -> All Domains -> Data Structures -> Advanced -> Jim and the Skyscrapers.
+
+    Source code must be in a file called skyscrapers.cpp.
+    Source code must be commented (In a real contest we don't have time to comment, but we want to learn techniques in this course that we revisit and reuse.)
+    Test cases should be written in a file called testcases.txt.  Make sure they are meaningful and test a wide range of inputs.  You must submit a minimum of 10 test cases.
+
+You may work in teams of 2 or 3.  Be sure to include each person's name at the top of the file as well as the pledge.  Also, put the team members' names in a comment on Canvas to facilitate grading.  Upload a single zip file called skyscrapers.zip with the C++ source code and test cases inside. 
+
+Note:
+
+If you cannot get your code to pass the tests on HackerRank, you should also submit a PDF in your zip file explaining:
+
+-- What type of error you are getting on HackerRank. (You may "purchase" the input to the test case you are failing.)
+
+-- What you tried to accomplish when coding the algorithm.
+
+-- What test cases you ran locally and what is wrong with the output.  If you see nothing wrong with any test cases locally, double check corner cases.
+
+-- How you went about tracing/debugging your code.
+
+The more information you provide, the easier it is for someone to help you correct your problem.
