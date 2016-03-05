@@ -1,88 +1,116 @@
+/*******************************************************************************
+ * Name        : skyscrapers.cpp
+ * Author      : Michael Curry and Justin Tsang
+ * Version     : 1.0
+ * Date        : 3/7/2016
+ * Description : Print amount of variation can reach all skyscrapers
+ * Pledge      : I pledge my honor that I have abided by the Stevens Honor System
+ ******************************************************************************/
 #include <iostream>
 #include <string>
 #include <istream>
 #include <stdio.h>
 #include <sstream>
 
+#define LONGTWO long long
+
 using namespace std;
 
-int getSkyscrapers(int buildings[], int &amtBuildings) {
-	int ctr = 0;
-	int indexStack = 0;
-	int indexCountStack = 0;
-	int stack[amtBuildings];
-	int countStack[amtBuildings];
+// Get the number of skyscrapers can get to
+LONGTWO getSkyscrapers(long buildings[], long &amtBuildings) {
+	// Variable initialization
+	LONGTWO ctr = 0;
+	long indexStack = 0;
+	LONGTWO counterIndex = 1;
+	long stack[amtBuildings];
 
+	// If more than one building
 	if (amtBuildings > 1) {
 		stack[0] = buildings[0];
-		for (int index = 1; index < amtBuildings; ++index) {
+		// Iterate throughout array of building heights
+		for (long index = 1; index < amtBuildings; ++index) {
+			// If buidling height is equal or less than the value at top stack
+			// push value to top of stack
 			if (buildings[index] <= stack[indexStack]) {
 				stack[++indexStack] = buildings[index];
-			// } else if (buildings[i] == stack[indexStack]) {
-			// 	stack[++indexStack] = buildings[i];
+			// If value is greater than the value at top of stack,
+			// pop from stack until reach value that is equal or stack is empty
+			// Count number of equal values at stack and add to ctr
 			} else {
 				while ((indexStack > -1) && (buildings[index] > stack[indexStack])) {
-					int currHeight = stack[indexStack--];
-					countStack[indexCountStack++] = currHeight;
-					while (stack[indexStack] == currHeight) {
-						countStack[indexCountStack++] = currHeight;
+					long currHeight = stack[indexStack--];
+					while ((indexStack > -1) && (stack[indexStack] == currHeight)) {
+						++counterIndex;
 						--indexStack;
 					}
-					if (indexStack > -1) {
-						ctr += (indexCountStack * (indexCountStack - 1)) / 2;
-					}
-					indexCountStack = 0;
+					ctr += counterIndex * (counterIndex - 1);
+					counterIndex = 1;
 				}
 				stack[++indexStack] = buildings[index];
 			}
 		}
+		// At completion of array iteration
+		// If stack is not empty, pop and find matching values and keep count
+		// Add the number of options from count
 		while (indexStack > -1) {
-			int currHeight = stack[indexStack--];
-			countStack[indexCountStack++] = currHeight;
-			while (stack[indexStack] == currHeight) {
-				countStack[indexCountStack++] = currHeight;
+			long currHeight = stack[indexStack--];
+			while ((indexStack > -1) && (stack[indexStack] == currHeight)) {
 				--indexStack;
+				++counterIndex;
 			}
-			ctr += (indexCountStack * (indexCountStack - 1)) / 2;
-			indexCountStack = 0;
+			ctr += counterIndex * (counterIndex - 1);
+			counterIndex = 1;
 		}
 	}
-	return (2 * ctr);
+	return ctr;
 }
 
 int main() {
-	int numBuilding;
-	if (!(cin >> numBuilding) || (numBuilding < 1) || 
-		(numBuilding > 300000)) {
-		cerr << "Error: Input must be in range [1:300000]\n";
+	long numBuilding;
+	// If not integer or numBuilding outside range [1:300000]
+	if (!(cin >> numBuilding) || ((numBuilding < 1) || (numBuilding > 300000))) {
+		cerr << "Error: Input must be in range [1:300000]. Received " <<
+				numBuilding << ".\n";
 		return 1;
 	}
-	int buildingHeights[numBuilding];
-	int index = 0;
+	// Create array of amount
+	long buildingHeights[numBuilding];
+	long index = 0;
 	string strHeights;
 	cin.ignore();
+	// Take user input for height value
 	getline(cin, strHeights);
-	int start_pos = 0, end_pos = 0;
-	int height;
-	while ((end_pos = strHeights.find(" ", start_pos)) != string::npos) 
+	long start_pos = 0, end_pos = 0;
+	long height;
+	// Parse string for empty space and append to array
+	while ((end_pos = strHeights.find(" ", start_pos)) != string::npos)
 	{
 		string currHeight = strHeights.substr(start_pos, end_pos - start_pos);
 		istringstream iss(currHeight);
-		if (!(iss >> height) || height < 0 || height > 1000000) {
+		// If the substring is not integer or outside range [1:1000000]
+		if (!(iss >> height) && ((height < 1) || (height > 1000000))) {
+			cerr << "Error: Not valid integer [1:1000000]. Received " <<
+					currHeight << ".\n";
 			return 1;
 		}
 		buildingHeights[index++] = height;
 		start_pos = end_pos + 1;
 	}
 	istringstream iss(strHeights.substr(start_pos, end_pos));
-	if (!(iss >> height) || height < 0 || height > 1000000) {
+	// If the substring is not integer or outside range [1:1000000]
+	if (!(iss >> height) || ((height < 0) || (height > 1000000))) {
+		cerr << "Error: Not valid integer [1:1000000]. Received " <<
+				strHeights.substr(start_pos, end_pos) << ".\n";
 		return 1;
 	}
 	buildingHeights[index++] = height;
+	// Check if amount of heights given does not match numBuilding given
 	if (index != numBuilding) {
-		cerr << "Amount not equal to amount heights\n";
+		cerr << "Error: Expecting " << numBuilding << " input. Received " <<
+				 index << " input.\n";
 		return 1;
 	}
+	// Perform the count of amount of variation of skyscraper travel
 	cout << getSkyscrapers(buildingHeights, numBuilding) << "\n";
 	return 0;
 }
