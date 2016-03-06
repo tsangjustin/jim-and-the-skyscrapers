@@ -12,20 +12,18 @@
 #include <stdio.h>
 #include <sstream>
 
-#define LONGTWO long long
-
 using namespace std;
 
 // Get the number of skyscrapers can get to
-LONGTWO getSkyscrapers(long buildings[], long &amtBuildings) {
+long long getSkyscrapers(long buildings[], long &amtBuildings) {
 	// Variable initialization
-	LONGTWO ctr = 0;
-	long indexStack = 0;
-	LONGTWO counterIndex = 1;
-	long stack[amtBuildings];
+	long long ctr = 0;
 
 	// If more than one building
 	if (amtBuildings > 1) {
+		long* stack = new long[amtBuildings];
+		long indexStack = 0;
+		long counterIndex = 1;
 		stack[0] = buildings[0];
 		// Iterate throughout array of building heights
 		for (long index = 1; index < amtBuildings; ++index) {
@@ -61,6 +59,7 @@ LONGTWO getSkyscrapers(long buildings[], long &amtBuildings) {
 			ctr += counterIndex * (counterIndex - 1);
 			counterIndex = 1;
 		}
+		delete stack;
 	}
 	return ctr;
 }
@@ -73,11 +72,11 @@ int main() {
 				numBuilding << ".\n";
 		return 1;
 	}
+	cin.ignore();
 	// Create array of amount
-	long buildingHeights[numBuilding];
+	long* buildingHeights = new long[numBuilding];
 	long index = 0;
 	string strHeights;
-	cin.ignore();
 	// Take user input for height value
 	getline(cin, strHeights);
 	long start_pos = 0, end_pos = 0;
@@ -88,7 +87,8 @@ int main() {
 		string currHeight = strHeights.substr(start_pos, end_pos - start_pos);
 		istringstream iss(currHeight);
 		// If the substring is not integer or outside range [1:1000000]
-		if (!(iss >> height) && ((height < 1) || (height > 1000000))) {
+		if (!(iss >> height) || ((height < 1) || (height > 1000000))) {
+			delete buildingHeights;
 			cerr << "Error: Not valid integer [1:1000000]. Received " <<
 					currHeight << ".\n";
 			return 1;
@@ -98,7 +98,8 @@ int main() {
 	}
 	istringstream iss(strHeights.substr(start_pos, end_pos));
 	// If the substring is not integer or outside range [1:1000000]
-	if (!(iss >> height) || ((height < 0) || (height > 1000000))) {
+	if (!(iss >> height) || ((height < 1) || (height > 1000000))) {
+		delete buildingHeights;
 		cerr << "Error: Not valid integer [1:1000000]. Received " <<
 				strHeights.substr(start_pos, end_pos) << ".\n";
 		return 1;
@@ -106,11 +107,13 @@ int main() {
 	buildingHeights[index++] = height;
 	// Check if amount of heights given does not match numBuilding given
 	if (index != numBuilding) {
+		delete buildingHeights;
 		cerr << "Error: Expecting " << numBuilding << " input. Received " <<
 				 index << " input.\n";
 		return 1;
 	}
 	// Perform the count of amount of variation of skyscraper travel
 	cout << getSkyscrapers(buildingHeights, numBuilding) << "\n";
+	delete buildingHeights;
 	return 0;
 }
